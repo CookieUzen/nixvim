@@ -10,8 +10,6 @@
 	plugins.yanky.enable = true;
 	plugins.yanky.enableTelescope = true;
 
-	# plugins.aerial.enable = true;
-
 	plugins.tmux-navigator.enable = true;
 
 	# git

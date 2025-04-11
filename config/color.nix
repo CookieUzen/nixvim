@@ -9,8 +9,6 @@
 	plugins.indent-blankline.enable = true;
 	plugins.bufferline.enable = true;
 
-	plugins.lightline.enable = true;
-
 	plugins.neoscroll.enable = true;
 
 	# code highlight

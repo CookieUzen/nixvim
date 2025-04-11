@@ -2,6 +2,8 @@
 
 {
 	plugins.telescope.enable = true;
+	dependencies.ripgrep.enable = true;
+
 	plugins.auto-save.enable = true;
 	plugins.auto-session.enable = true;
 	plugins.nvim-surround.enable = true;
@@ -13,6 +15,7 @@
 	plugins.tmux-navigator.enable = true;
 
 	# git
+	dependencies.git.enable = true;
 	plugins.neogit.enable = true;
 	plugins.diffview.enable = true;
 	plugins.gitsigns.enable = true;

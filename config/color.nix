@@ -8,7 +8,7 @@
 	plugins.zen-mode.enable = true;
 	plugins.indent-blankline.enable = true;
 	plugins.bufferline.enable = true;
-
+	plugins.lualine.enable = true;
 	plugins.neoscroll.enable = true;
 
 	# code highlight

@@ -15,8 +15,8 @@
 	# git
 	plugins.neogit.enable = true;
 	plugins.diffview.enable = true;
+	plugins.gitsigns.enable = true;
 	# plugins.fugitive.enable = true;
-	# plugins.gitgutter.enable = true;
 
 	# bullet points
 	plugins.bullets = {

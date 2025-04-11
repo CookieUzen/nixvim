@@ -17,6 +17,7 @@
 
 	plugins.web-devicons.enable = true;
 	plugins.treesitter-context.enable = true;
+	plugins.treesitter-context.settings.separator = "-";
 	plugins.treesitter = {
 		enable = true;
 

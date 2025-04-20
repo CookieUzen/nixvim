@@ -1,7 +1,8 @@
 { pkgs, ... }:
 
 {
-	colorschemes.nord.enable = true;
+	# colorschemes.nord.enable = true;
+	colorschemes.catppuccin.enable = true;
 
 	# Make buffer cool
 	plugins.twilight.enable = true;

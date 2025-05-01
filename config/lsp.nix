@@ -1,12 +1,28 @@
 { pkgs, ... }:
 
 {
+	# Configure lsps
+	extraConfigLua = ''
+		local lspconfig = require("lspconfig")
+
+		local function setup_if_available(server_name, config)
+			if vim.fn.executable(server_name) == 1
+				then lspconfig[server_name].setup(config or {})
+			end
+		end
+
+		setup_if_available("clangd")
+		setup_if_available("pyright")
+		setup_if_available("ts_ls")
+		setup_if_available("tinymist")
+		setup_if_available("gopls")
+		setup_if_available("jdtls")
+	'';
+
 	plugins.lsp = {
 		enable = true;
 
 		servers = {
-			ts_ls.enable = true;
-			clangd.enable = true;
 			nixd.enable = true;
 		};
 

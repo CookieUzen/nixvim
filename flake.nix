@@ -20,6 +20,9 @@
       perSystem =
         { system, ... }:
         let
+          # Define pkgs for easy access
+          pkgs = inputs.nixpkgs.legacyPackages.${system};
+
           nixvimLib = nixvim.lib.${system};
           nixvim' = nixvim.legacyPackages.${system};
           nixvimModule = {
@@ -28,10 +31,32 @@
             # You can use `extraSpecialArgs` to pass additional arguments to your module files
             extraSpecialArgs = {
               # inherit (inputs) foo;
-              pkgs = import inputs.nixpkgs { system = system; };
+              pkgs = pkgs;
             };
           };
           nvim = nixvim'.makeNixvimWithModule nixvimModule;
+        
+          # Build a docker image
+          dockerImage = pkgs.lib.optionalAttrs
+            (pkgs.stdenv.isLinux)
+            (pkgs.dockerTools.buildImage {
+              name = "cookieuzen/nixvim";
+              tag  = "latest";
+
+              copyToRoot = pkgs.buildEnv {
+                name = "nixvim";
+                paths = [ nvim ];
+                pathsToLink = [ "/bin" ]; # only link /bin
+              };
+
+              config = {
+                Cmd        = [ "/bin/nvim" ];
+                WorkingDir = "/workspace";
+                Env        = [ "TERM=xterm-256color" ];
+              };
+            });
+
+
         in
         {
           checks = {
@@ -42,6 +67,7 @@
           packages = {
             # Lets you run `nix run .` to start nixvim
             default = nvim;
+            docker = dockerImage;
           };
         };
     };

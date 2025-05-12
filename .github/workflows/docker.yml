@@ -1,0 +1,73 @@
+name: Build Docker
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:     [ "*" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
+env:
+  IMAGE_NAME: nixvim
+  REGISTRY: ghcr.io
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Install nix
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          nix_conf: |
+            experimental-features = nix-command flakes
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+
+      # build nixvim docker image
+      - name: Build nixvim Docker Image (tarball)
+        run: |
+          nix build .#packages.x86_64-linux.docker \
+            --out-link result-image
+      
+      # Import image to docker daemon
+      - name: docker load
+        run: docker load --input result-image
+
+      # Tag image
+      - name: Retag for GHCR
+        id: tagstep
+        env:
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          LOCAL=$(docker images --format '{{.Repository}}:{{.Tag}}' | head -1)
+          SHORT_SHA=$(git rev-parse --short=8 $GITHUB_SHA)  # get truncated commit hash
+  
+          docker tag "$LOCAL" $REGISTRY/${OWNER}/${IMAGE_NAME}:latest
+          docker tag "$LOCAL" $REGISTRY/${OWNER}/${IMAGE_NAME}:$SHORT_SHA
+  
+          # if the workflow was triggered by an annotated tag (e.g. v1.0.0)
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            docker tag "$LOCAL" $REGISTRY/${OWNER}/${IMAGE_NAME}:${GITHUB_REF_NAME}
+            echo "EXTRA_TAG=$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
+          fi
+
+      # Authenticate to GHCR and push
+      - name: Login & push
+        env:
+          OWNER: ${{ github.repository_owner }}
+          SHORT_SHA: ${{ steps.tagstep.outputs.SHORT_SHA }}
+          EXTRA_TAG: ${{ steps.tagstep.outputs.EXTRA_TAG }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | \
+            docker login $REGISTRY -u "${{ github.actor }}" --password-stdin
+  
+          docker push $REGISTRY/${OWNER}/${IMAGE_NAME}:latest
+          docker push $REGISTRY/${OWNER}/${IMAGE_NAME}:$SHORT_SHA
+  
+          if [ -n "$EXTRA_TAG" ]; then
+            docker push $REGISTRY/${OWNER}/${IMAGE_NAME}:$EXTRA_TAG
+          fi

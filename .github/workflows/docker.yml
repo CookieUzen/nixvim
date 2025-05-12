@@ -43,31 +43,32 @@ jobs:
         env:
           OWNER: ${{ github.repository_owner }}
         run: |
+          OWNER_LC=$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')
           LOCAL=$(docker images --format '{{.Repository}}:{{.Tag}}' | head -1)
           SHORT_SHA=$(git rev-parse --short=8 $GITHUB_SHA)  # get truncated commit hash
   
-          docker tag "$LOCAL" $REGISTRY/${OWNER}/${IMAGE_NAME}:latest
-          docker tag "$LOCAL" $REGISTRY/${OWNER}/${IMAGE_NAME}:$SHORT_SHA
+          docker tag "$LOCAL" $REGISTRY/${OWNER_LC}/${IMAGE_NAME}:latest
+          docker tag "$LOCAL" $REGISTRY/${OWNER_LC}/${IMAGE_NAME}:$SHORT_SHA
   
           # if the workflow was triggered by an annotated tag (e.g. v1.0.0)
           if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
-            docker tag "$LOCAL" $REGISTRY/${OWNER}/${IMAGE_NAME}:${GITHUB_REF_NAME}
+            docker tag "$LOCAL" $REGISTRY/${OWNER_LC}/${IMAGE_NAME}:${GITHUB_REF_NAME}
             echo "EXTRA_TAG=$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
           fi
 
       # Authenticate to GHCR and push
       - name: Login & push
         env:
-          OWNER: ${{ github.repository_owner }}
+          OWNER_LC: ${{ steps.tagstep.outputs.OWNER_LC }}
           SHORT_SHA: ${{ steps.tagstep.outputs.SHORT_SHA }}
           EXTRA_TAG: ${{ steps.tagstep.outputs.EXTRA_TAG }}
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | \
             docker login $REGISTRY -u "${{ github.actor }}" --password-stdin
   
-          docker push $REGISTRY/${OWNER}/${IMAGE_NAME}:latest
-          docker push $REGISTRY/${OWNER}/${IMAGE_NAME}:$SHORT_SHA
+          docker push $REGISTRY/${OWNER_LC}/${IMAGE_NAME}:latest
+          docker push $REGISTRY/${OWNER_LC}/${IMAGE_NAME}:$SHORT_SHA
   
           if [ -n "$EXTRA_TAG" ]; then
-            docker push $REGISTRY/${OWNER}/${IMAGE_NAME}:$EXTRA_TAG
+            docker push $REGISTRY/${OWNER_LC}/${IMAGE_NAME}:$EXTRA_TAG
           fi

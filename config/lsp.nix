@@ -17,6 +17,9 @@
 		setup_if_available("tinymist")
 		setup_if_available("gopls")
 		setup_if_available("jdtls")
+
+		-- Setup gdscript to connect to the Godot editor
+		require("lspconfig").gdscript.setup({})
 	'';
 
 	plugins.lsp = {

@@ -22,9 +22,6 @@ jobs:
 
       # Install nix
       - uses: DeterminateSystems/nix-installer-action@main
-        with:
-          nix_conf: |
-            experimental-features = nix-command flakes
       - uses: DeterminateSystems/magic-nix-cache-action@main
 
       # build nixvim docker image
@@ -46,22 +43,26 @@ jobs:
           OWNER_LC=$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')
           LOCAL=$(docker images --format '{{.Repository}}:{{.Tag}}' | head -1)
           SHORT_SHA=$(git rev-parse --short=8 $GITHUB_SHA)  # get truncated commit hash
-  
+
+          # Export varaibles for later steps
+          echo "owner_lc=$OWNER_LC" >> "$GITHUB_OUTPUT"
+          echo "short_sha=$SHORT_SHA" >> "$GITHUB_OUTPUT"
+
           docker tag "$LOCAL" $REGISTRY/${OWNER_LC}/${IMAGE_NAME}:latest
           docker tag "$LOCAL" $REGISTRY/${OWNER_LC}/${IMAGE_NAME}:$SHORT_SHA
-  
+
           # if the workflow was triggered by an annotated tag (e.g. v1.0.0)
           if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
             docker tag "$LOCAL" $REGISTRY/${OWNER_LC}/${IMAGE_NAME}:${GITHUB_REF_NAME}
-            echo "EXTRA_TAG=$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
+            echo "extra_tag=$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
           fi
 
       # Authenticate to GHCR and push
       - name: Login & push
         env:
-          OWNER_LC: ${{ steps.tagstep.outputs.OWNER_LC }}
-          SHORT_SHA: ${{ steps.tagstep.outputs.SHORT_SHA }}
-          EXTRA_TAG: ${{ steps.tagstep.outputs.EXTRA_TAG }}
+          OWNER_LC: ${{ steps.tagstep.outputs.owner_lc }}
+          SHORT_SHA: ${{ steps.tagstep.outputs.short_sha }}
+          EXTRA_TAG: ${{ steps.tagstep.outputs.extra_tag }}
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | \
             docker login $REGISTRY -u "${{ github.actor }}" --password-stdin

@@ -38,4 +38,6 @@
 		};
 	};
 
+	# note taking
+	plugins.zk.enable = true;
 }

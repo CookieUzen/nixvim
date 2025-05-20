@@ -40,4 +40,9 @@
 
 	# note taking
 	plugins.zk.enable = true;
+
+	# fcitx support
+	extraPlugins = with pkgs.vimPlugins; [
+		fcitx-vim
+	];
 }

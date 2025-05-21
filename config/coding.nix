@@ -2,7 +2,34 @@
 
 {
 	plugins.telescope.enable = true;
+	plugins.harpoon = {
+		enable = true;
+		enableTelescope = true;
+		package = pkgs.vimPlugins.harpoon2;
+		autoLoad = true;
+		settings = {
+			global_settings = {
+				save_on_toggle = true;
+			};
+		};
+	};
 	dependencies.ripgrep.enable = true;
+
+    extraConfigLua = ''
+        -- load+configure Harpoon
+        local harpoon = require("harpoon")
+		
+        vim.keymap.set("n", "<leader>a", function() harpoon:list():add()                              end, { silent = true })
+		vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+
+        vim.keymap.set("n", "<leader>1",       function() harpoon:list():select(1)                     end, { silent = true })
+        vim.keymap.set("n", "<leader>2",       function() harpoon:list():select(2)                     end, { silent = true })
+        vim.keymap.set("n", "<leader>3",       function() harpoon:list():select(3)                     end, { silent = true })
+        vim.keymap.set("n", "<leader>4",       function() harpoon:list():select(4)                     end, { silent = true })
+
+        vim.keymap.set("n", "<leader>p",     function() harpoon:list():prev()                       end, { silent = true })
+        vim.keymap.set("n", "<leader>n",     function() harpoon:list():next()                       end, { silent = true })
+    '';
 
 	plugins.auto-save.enable = true;
 	plugins.auto-session.enable = true;

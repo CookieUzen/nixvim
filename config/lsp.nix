@@ -17,6 +17,7 @@
 		setup_if_available("tinymist")
 		setup_if_available("gopls")
 		setup_if_available("jdtls")
+		setup_if_available("texlab")
 
 		-- Setup gdscript to connect to the Godot editor
 		require("lspconfig").gdscript.setup({})
@@ -56,11 +57,11 @@
 			};
 
 			sources = [
-				{ name = "copilot"; }
 				{ name = "nvim_lsp"; }
 				{ name = "path"; }
 				{ name = "buffer"; }
 				{ name = "cmdline"; }
+				{ name = "copilot"; }
 			];
 
 			window.completion.border = [

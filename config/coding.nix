@@ -2,6 +2,29 @@
 
 {
 	plugins.telescope.enable = true;
+
+	# Bind keybinds for telescope
+	keymaps = [
+		{
+			action = "<cmd> Telescope buffers <cr>";
+			key = "<leader>b";
+			mode = "n";
+			options = {
+				desc = "Telescope: Buffers";
+				silent = true;
+			};
+		}
+		{
+			action = "<cmd> Telescope fd <cr>";
+			key = "<leader>f";
+			mode = "n";
+			options = {
+				desc = "Telescope: files";
+				silent = true;
+			};
+		}
+	];
+
 	plugins.harpoon = {
 		enable = true;
 		enableTelescope = true;

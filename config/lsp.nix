@@ -81,4 +81,7 @@
 	plugins.copilot-lua.enable = true;
 
 	plugins.trouble.enable = true;
+
+	# Latex
+	plugins.vimtex.enable = true;
 }

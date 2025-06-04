@@ -83,5 +83,12 @@
 	plugins.trouble.enable = true;
 
 	# Latex
-	plugins.vimtex.enable = true;
+	plugins.vimtex = {
+		enable = true;
+		texlivePackage = pkgs.tectonic;
+		settings = {
+			compiler_method = "tectonic";
+			view_method = "zathura";
+		};
+	};
 }

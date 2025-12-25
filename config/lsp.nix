@@ -12,7 +12,7 @@
 		end
 
 		setup_if_available("clangd")
-		setup_if_available("pyright")
+		setup_if_available("basedpyright")
 		setup_if_available("ts_ls")
 		setup_if_available("tinymist")
 		setup_if_available("gopls")

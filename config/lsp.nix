@@ -18,6 +18,7 @@
 		setup_if_available("gopls")
 		setup_if_available("jdtls")
 		setup_if_available("texlab")
+		setup_if_available("terraform-ls")
 
 		-- Setup gdscript to connect to the Godot editor
 		require("lspconfig").gdscript.setup({})

@@ -1,96 +1,111 @@
 { pkgs, ... }:
 
 {
-	# Configure lsps
-	extraConfigLua = ''
-		local lspconfig = require("lspconfig")
+  plugins.lsp = {
+    enable = true;
 
-		local function setup_if_available(server_name, config)
-			if vim.fn.executable(server_name) == 1
-				then lspconfig[server_name].setup(config or {})
-			end
-		end
+    servers = {
+      # Nix language server (managed by nixvim)
+      nixd.enable = true;
 
-		setup_if_available("clangd")
-		setup_if_available("basedpyright")
-		setup_if_available("ts_ls")
-		setup_if_available("tinymist")
-		setup_if_available("gopls")
-		setup_if_available("jdtls")
-		setup_if_available("texlab")
-		setup_if_available("terraform-ls")
+      # External LSP servers (managed via devenv)
+      clangd = {
+        enable = true;
+        package = null; # Expects clangd on $PATH from devenv
+      };
 
-		-- Setup gdscript to connect to the Godot editor
-		require("lspconfig").gdscript.setup({})
-	'';
+      basedpyright = {
+        enable = true;
+        package = null; # Expects basedpyright on $PATH from devenv
+      };
 
-	plugins.lsp = {
-		enable = true;
+      ts_ls = {
+        enable = true;
+        package = null; # Expects typescript-language-server on $PATH from devenv
+      };
 
-		servers = {
-			nixd.enable = true;
-		};
+      tinymist = {
+        enable = true;
+        package = null; # Expects tinymist on $PATH from devenv
+      };
 
-		keymaps.lspBuf = {
-			"gd" = "definition";
-			"gD" = "references";
-			"gt" = "type_definition";
-			"gi" = "implementation";
-			"K" = "hover";
-			"<space>rn" = "rename";
-		};
-	};
+      gopls = {
+        enable = true;
+        package = null; # Expects gopls on $PATH from devenv
+      };
 
-	plugins.cmp = {
-		enable = true;
-		autoEnableSources = true;
-		settings = {
-			mapping = {
-				"<C-b>" = "cmp.mapping.scroll_docs(-4)";
-				"<C-f>" = "cmp.mapping.scroll_docs(4)";
-				"<C-Space>" = "cmp.mapping.complete()";
-				"<C-e>" = "cmp.mapping.abort()";
-				"<C-n>" = "cmp.mapping.select_next_item({ modes = {'i', 's'} })";
-				"<C-p>" = "cmp.mapping.select_prev_item({ modes = {'i', 's'} })";
-				"<Tab>" = "cmp.mapping.select_next_item({ modes = {'i', 's'} })";
-				"<S-Tab>" = "cmp.mapping.select_prev_item({ modes = {'i', 's'} })";
-				"<CR>" = "cmp.mapping.confirm({ select = true})";
-			};
+      jdtls = {
+        enable = true;
+        package = null; # Expects jdtls on $PATH from devenv
+      };
 
-			sources = [
-				{ name = "nvim_lsp"; }
-				{ name = "path"; }
-				{ name = "buffer"; }
-				{ name = "cmdline"; }
-				{ name = "copilot"; }
-			];
+      texlab = {
+        enable = true;
+        package = null; # Expects texlab on $PATH from devenv
+      };
 
-			window.completion.border = [
-				"╭"
-				"─"
-				"╮"
-				"│"
-				"╯"
-				"─"
-				"╰"
-				"│"
-			];
-		};
-	};
-	
-	# copilot
-	plugins.copilot-lua.enable = true;
-	plugins.copilot-chat.enable = true;
+      terraformls = {
+        enable = true;
+        package = null; # Expects terraform-ls on $PATH from devenv
+      };
 
-	plugins.trouble.enable = true;
+      gdscript = {
+        enable = true;
+        package = null; # Expects gdscript server from Godot editor
+      };
+    };
 
-	# Latex
-	plugins.vimtex = {
-		enable = true;
-		texlivePackage = pkgs.tectonic;
-		settings = {
-			compiler_method = "tectonic";
-			view_method = "zathura";
-		};
-	};
+    keymaps.lspBuf = {
+      "gd" = "definition";
+      "gD" = "references";
+      "gt" = "type_definition";
+      "gi" = "implementation";
+      "K" = "hover";
+      "<space>rn" = "rename";
+    };
+  };
+
+  plugins.cmp = {
+    enable = true;
+    autoEnableSources = true;
+    settings = {
+      mapping = {
+        "<C-b>" = "cmp.mapping.scroll_docs(-4)";
+        "<C-f>" = "cmp.mapping.scroll_docs(4)";
+        "<C-Space>" = "cmp.mapping.complete()";
+        "<C-e>" = "cmp.mapping.abort()";
+        "<C-n>" = "cmp.mapping.select_next_item({ modes = {'i', 's'} })";
+        "<C-p>" = "cmp.mapping.select_prev_item({ modes = {'i', 's'} })";
+        "<Tab>" = "cmp.mapping.select_next_item({ modes = {'i', 's'} })";
+        "<S-Tab>" = "cmp.mapping.select_prev_item({ modes = {'i', 's'} })";
+        "<C-CR>" = "cmp.mapping.confirm({ select = true})";
+      };
+
+      sources = [
+        { name = "nvim_lsp"; }
+        { name = "path"; }
+        { name = "buffer"; }
+        { name = "cmdline"; }
+        { name = "copilot"; }
+      ];
+
+      window.completion.border = [
+        "╭"
+        "─"
+        "╮"
+        "│"
+        "╯"
+        "─"
+        "╰"
+        "│"
+      ];
+    };
+  };
+
+  # copilot
+  plugins.copilot-lua.enable = true;
+  plugins.copilot-chat.enable = true;
+
+  plugins.trouble.enable = true;
 }
+

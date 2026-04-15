@@ -48,6 +48,7 @@
 			cpp
 			html
 			python
+			typst
 		];
 	};
 }

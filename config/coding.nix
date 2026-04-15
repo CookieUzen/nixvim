@@ -80,7 +80,6 @@
 			enabled_file_types = [
 				"markdown"
 				"text"
-				"typst"
 				"gitcommit"
 				"scratch"
 			];

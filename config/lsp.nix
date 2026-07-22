@@ -104,7 +104,7 @@
 
   # copilot
   plugins.copilot-lua.enable = true;
-  plugins.copilot-chat.enable = true;
+  # plugins.copilot-chat.enable = true;
 
   plugins.trouble.enable = true;
 
